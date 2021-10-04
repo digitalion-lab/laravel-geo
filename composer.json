@@ -1,6 +1,6 @@
 {
-    "name": "digitalion/project-tools",
-    "description": "Collection of basic tools for common functionality in projects",
+    "name": "digitalion/laravel-geo",
+    "description": "Utilities for the use of addresses and geolocation",
     "type": "library",
     "license": "MIT",
     "minimum-stability": "dev",
@@ -9,11 +9,9 @@
         "digitalion",
         "laravel",
         "artisan",
-        "make",
-        "commands",
-        "trait",
-        "class",
-        "helper"
+        "geo",
+        "address",
+        "geolocation"
     ],
     "authors": [
         {
@@ -24,7 +22,9 @@
         }
     ],
     "require": {
-        "illuminate/support": ">=6"
+        "illuminate/support": ">=6",
+        "guzzlehttp/guzzle": "^7.3",
+        "spatie/geocoder": "^3.10"
     },
     "autoload": {
           "psr-4": {

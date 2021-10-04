@@ -2,15 +2,9 @@
 
 namespace Digitalion\LaravelGeo;
 
-use Digitalion\LaravelGeo\Commands\DataGeoCommand;
-use Digitalion\LaravelGeo\Commands\MakeClassCommand;
-use Digitalion\LaravelGeo\Commands\MakeEnumCommand;
-use Digitalion\LaravelGeo\Commands\MakeHelperCommand;
-use Digitalion\LaravelGeo\Commands\MakeLangCommand;
-use Digitalion\LaravelGeo\Commands\MakeScopeCommand;
-use Digitalion\LaravelGeo\Commands\MakeTraitCommand;
+use Digitalion\LaravelGeo\Commands\GeoDataCommand;
+use Digitalion\LaravelGeo\Commands\GeoFixCommand;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 
 class LaravelGeoServiceProvider extends ServiceProvider
 {
@@ -43,7 +37,8 @@ class LaravelGeoServiceProvider extends ServiceProvider
 
 			// registering artisan commands
 			$this->commands([
-				DataGeoCommand::class,
+				GeoDataCommand::class,
+				GeoFixCommand::class,
 			]);
 		}
 	}

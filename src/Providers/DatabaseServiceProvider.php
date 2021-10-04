@@ -30,7 +30,8 @@ class DatabaseServiceProvider extends ServiceProvider
 	{
 		Schema::defaultstringLength(191);
 
-		Blueprint::macro('address', function (bool $required = true, bool $with_geo_relations = false) {
+		$default_country = strtoupper(config('geo.default_country'));
+		Blueprint::macro('address', function (bool $required = true, bool $with_geo_relations = false) use ($default_country) {
 			$this->string('route', 100)->nullable($required);
 			$this->string('street_number', 25)->nullable();
 			$this->unsignedMediumInteger('postal_code')->nullable($required);
@@ -41,7 +42,7 @@ class DatabaseServiceProvider extends ServiceProvider
 			$this->string('province', 2)->nullable($required);
 			if ($with_geo_relations) $this->foreignIdFor(GeoRegion::class)->nullable()->constrained()->nullOnDelete();
 			$this->string('region', 100)->nullable($required);
-			$this->string('country', 3)->nullable($required)->default('IT');
+			$this->string('country', 3)->nullable($required)->default($default_country);
 			$this->double('latitude', 11, 8)->nullable($required)->default(0.0);
 			$this->double('longitude', 11, 8)->nullable($required)->default(0.0);
 		});
