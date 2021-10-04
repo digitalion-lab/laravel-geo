@@ -1,0 +1,42 @@
+{
+    "name": "digitalion/project-tools",
+    "description": "Collection of basic tools for common functionality in projects",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "keywords": [
+        "digitalion",
+        "laravel",
+        "artisan",
+        "make",
+        "commands",
+        "trait",
+        "class",
+        "helper"
+    ],
+    "authors": [
+        {
+            "name": "Digitalion",
+            "email": "dev@digitalion.it",
+            "homepage": "https://digitalion.it",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "illuminate/support": ">=6"
+    },
+    "autoload": {
+          "psr-4": {
+              "Digitalion\\LaravelGeo\\": "src/"
+          }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Digitalion\\LaravelGeo\\LaravelGeoServiceProvider",
+                "Digitalion\\LaravelGeo\\Providers\\DatabaseServiceProvider"
+            ]
+        }
+    }
+}
