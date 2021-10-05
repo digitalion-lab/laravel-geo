@@ -2,13 +2,13 @@
 
 namespace Digitalion\LaravelGeo\Models;
 
-use Digitalion\LaravelGeo\Traits\ModelDynamicTableTrait;
+use Digitalion\LaravelGeo\Traits\GeoTableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class GeoRegion extends Model
 {
-	use HasFactory, ModelDynamicTableTrait;
+	use HasFactory, GeoTableTrait;
 
 	protected $guarded = [];
 	public $timestamps = false;

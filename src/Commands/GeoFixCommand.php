@@ -9,21 +9,30 @@ use Spatie\Geocoder\Geocoder;
 class GeoFixCommand extends Command
 {
 	protected $signature = 'geo:fix {model}';
-	protected $description = 'Correcting and formatting addresses';
+	protected $description = 'Correcting and formatting addresses in a table';
 
 	public function handle()
 	{
 		$arg_model = $this->argument('model');
-		$default_country = strtolower(config('geo.default_country'));
 		$client = new Client();
 		$geocoder = new Geocoder($client);
-		$geocoder->setApiKey(config('geo.gmaps_apikey'));
-		$geocoder->setCountry($default_country);
+
+		// configuration
+		if (!empty(config('geo.google_maps_api_key'))) $geocoder->setApiKey(config('geo.google_maps_api_key'));
+		$config = config('geo.geocoding', []);
+		if (!empty($config['country'])) $geocoder->setCountry(strtoupper($config['country']));
+		if (!empty($config['region'])) $geocoder->setRegion(strtolower($config['region']));
+		if (!empty($config['bounds'])) $geocoder->setBounds($config['bounds']);
+		if (!empty($config['language'])) $geocoder->setLanguage(strtolower($config['language']));
 
 		$version = app()->version();
 		$lv = intval(substr($version, 0, strpos($version, '.')));
-		$class = (($lv < 8) ? 'App\\Models\\' : 'App\\') . ucfirst($arg_model);
-		$items = $class::withoutGlobalScopes()->whereNotNull('route')->where('route', '<>', '')->where(function ($query) {
+		$class_namespace = (($lv >= 8) ? 'App\\Models\\' : 'App\\') . ucfirst($arg_model);
+		if (!class_exists($class_namespace)) {
+			$this->warn('Model not found.');
+			return;
+		}
+		$items = $class_namespace::withoutGlobalScopes()->whereNotNull('route')->where('route', '<>', '')->where(function ($query) {
 			$query->whereNull('latitude')->orWhereNull('longitude');
 		})->get();
 		$this->line('Found ' . $items->count() . ' items without coordinates but with the road indicated.');

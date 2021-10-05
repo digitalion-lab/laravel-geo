@@ -29,14 +29,23 @@ trait HasAddressTrait
 		return 'https://www.google.com/maps/place/' . $this->latitude . ',' . $this->longitude;
 	}
 
-	public function getGmapsImageAttribute()
+	public function getGmapsImageAttribute(): string
 	{
-		return $this->getGmapsImage(600, 400, 13);
-	}
+		$apikey = config('portal.google.gmaps_key');
+		$maptype = config('geo.map.maptype', 'roadmap');
+		$format = strtolower(config('geo.map.format', 'png'));
+		$width = config('geo.map.width', 600);
+		$height = config('geo.map.height', 400);
+		$zoom = config('geo.map.zoom', 13);
 
-	public function getGmapsImage(int $width = 600, int $height = 400, int $zoom = 13)
-	{
-		//FIXME: check link
-		return "https://maps.googleapis.com/maps/api/staticmap?center={$this->latitude},{$this->longitude}&zoom=$zoom&scale=2&size={$width}x{$height}&maptype=satellite&key=" . config('portal.google.gmaps_key') . "&format=png&visual_refresh=true";
+		return 'https://maps.googleapis.com/maps/api/staticmap?' .
+			'center=' . $this->latitude . ',' . $this->longitude .
+			'&zoom=' . $zoom .
+			'&scale=2' .
+			'&size=' . $width . 'x' . $height .
+			'&maptype=' . $maptype .
+			'&key=' . $apikey .
+			'&format=' . $format .
+			'&visual_refresh=true';
 	}
 }
