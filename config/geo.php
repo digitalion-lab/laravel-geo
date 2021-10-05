@@ -11,6 +11,8 @@ return [
 	 */
 	'google_maps_api_key' => env('GMAPS_API_KEY', ''),
 
+	'marker_icon_url' => '',
+
 
 	'geocoding' => [
 

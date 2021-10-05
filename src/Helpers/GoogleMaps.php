@@ -83,6 +83,11 @@ class GoogleMaps
 		$width = intval(config('geo.map.width', 600));
 		$height = intval(config('geo.map.height', 400));
 		$zoom = intval(config('geo.map.zoom', 13));
+		$markerIconUrl = config('geo.marker_icon_url');
+		$icon = '';
+		if (!empty($markerIconUrl)) {
+			$icon = '&markers=icon:' . $markerIconUrl . '|' . $latitude . ',' . $longitude;
+		}
 
 		return 'https://maps.googleapis.com/maps/api/staticmap?' .
 			'center=' . $latitude . ',' . $longitude .
@@ -92,7 +97,8 @@ class GoogleMaps
 			'&maptype=' . $maptype .
 			'&key=' . $apikey .
 			'&format=' . $format .
-			'&visual_refresh=true';
+			'&visual_refresh=true' .
+			$icon;
 	}
 
 
