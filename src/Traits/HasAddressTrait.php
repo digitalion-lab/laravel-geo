@@ -2,6 +2,8 @@
 
 namespace Digitalion\LaravelGeo\Traits;
 
+use Digitalion\LaravelGeo\Helpers\GoogleMaps;
+
 trait HasAddressTrait
 {
 	public function initializeHasAddressTrait()
@@ -26,26 +28,11 @@ trait HasAddressTrait
 
 	public function getGmapsUrlAttribute()
 	{
-		return 'https://www.google.com/maps/place/' . $this->latitude . ',' . $this->longitude;
+		return GoogleMaps::getMapUrl($this->latitude, $this->longitude);
 	}
 
-	public function getGmapsImageAttribute(): string
+	public function getGmapsImageAttribute()
 	{
-		$apikey = config('portal.google.gmaps_key');
-		$maptype = config('geo.map.maptype', 'roadmap');
-		$format = strtolower(config('geo.map.format', 'png'));
-		$width = config('geo.map.width', 600);
-		$height = config('geo.map.height', 400);
-		$zoom = config('geo.map.zoom', 13);
-
-		return 'https://maps.googleapis.com/maps/api/staticmap?' .
-			'center=' . $this->latitude . ',' . $this->longitude .
-			'&zoom=' . $zoom .
-			'&scale=2' .
-			'&size=' . $width . 'x' . $height .
-			'&maptype=' . $maptype .
-			'&key=' . $apikey .
-			'&format=' . $format .
-			'&visual_refresh=true';
+		return GoogleMaps::getMapImageUrl($this->latitude, $this->longitude);
 	}
 }

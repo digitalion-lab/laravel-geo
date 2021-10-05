@@ -18,14 +18,17 @@ class CreateGeoTables extends Migration
 		$table_prefix = config('geo.tables_prefix');
 		Schema::create($table_prefix . 'regions', function (Blueprint $table) {
 			$table->id();
-			$table->string('country');
+			$table->string('code', 5);
 			$table->string('name');
+			$table->string('country');
+			$table->json('polygon')->nullable();
 		});
 		Schema::create($table_prefix . 'provinces', function (Blueprint $table) use ($table_prefix) {
 			$table->id();
 			$table->foreignIdFor(GeoRegion::class)->constrained($table_prefix . 'regions')->cascadeOnDelete();
 			$table->string('code', 5);
 			$table->string('name');
+			$table->json('polygon')->nullable();
 		});
 		Schema::create($table_prefix . 'cities', function (Blueprint $table) use ($table_prefix) {
 			$table->id();
