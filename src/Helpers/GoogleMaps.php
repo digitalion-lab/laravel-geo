@@ -13,7 +13,7 @@ class GoogleMaps
 	 * CONSTRUCTOR
 	 */
 
-	public function __constructor()
+	public function __construct()
 	{
 		$this->initGeocoder();
 	}
@@ -70,27 +70,31 @@ class GoogleMaps
 	 * PUBLIC STATIC METHODS
 	 */
 
-	public static function getMapUrl(float $latitude, float $longitude): string
+	public static function getMapUrl($latitude,  $longitude): string
 	{
-		return 'https://www.google.com/maps/place/' . $latitude . ',' . $longitude;
+		$coords = (!empty($latitude) || !empty($longitude)) ? $latitude . ',' . $longitude : '';
+		return (!empty($coords))
+			? 'https://www.google.com/maps/place/' . $coords
+			: '';
 	}
 
-	public static function getMapImageUrl(float $latitude, float $longitude): string
+	public static function getMapImageUrl($latitude,  $longitude): string
 	{
-		$apikey = config('portal.google.gmaps_key');
+		$apikey = config('geo.google_maps_api_key');
 		$maptype = config('geo.map.maptype', 'roadmap');
 		$format = strtolower(config('geo.map.format', 'png'));
 		$width = intval(config('geo.map.width', 600));
 		$height = intval(config('geo.map.height', 400));
 		$zoom = intval(config('geo.map.zoom', 13));
 		$markerIconUrl = config('geo.marker_icon_url');
+		$coords = (!empty($latitude) || !empty($longitude)) ? $latitude . ',' . $longitude : '';
 		$icon = '';
 		if (!empty($markerIconUrl)) {
-			$icon = '&markers=icon:' . $markerIconUrl . '|' . $latitude . ',' . $longitude;
+			$icon = '&markers=icon:' . $markerIconUrl . '|' . $coords;
 		}
 
 		return 'https://maps.googleapis.com/maps/api/staticmap?' .
-			'center=' . $latitude . ',' . $longitude .
+			'center=' . $coords .
 			'&zoom=' . $zoom .
 			'&scale=2' .
 			'&size=' . $width . 'x' . $height .

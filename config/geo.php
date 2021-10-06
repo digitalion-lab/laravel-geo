@@ -11,6 +11,9 @@ return [
 	 */
 	'google_maps_api_key' => env('GMAPS_API_KEY', ''),
 
+	/**
+	 * url of the marker to put in the static map to indicate the exact coordinates
+	 */
 	'marker_icon_url' => '',
 
 
