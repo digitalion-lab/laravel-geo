@@ -41,19 +41,19 @@ class DatabaseServiceProvider extends ServiceProvider
 		}
 
 		Blueprint::macro('address', function (bool $required = true) use ($default_country, $with_geo_relations) {
-			$this->string('route', 100)->nullable($required);
+			$this->string('route', 100)->nullable(!$required);
 			$this->string('street_number', 25)->nullable();
-			$this->unsignedMediumInteger('postal_code')->nullable($required);
+			$this->unsignedMediumInteger('postal_code')->nullable(!$required);
 			$this->string('locality', 100)->nullable();
 			if ($with_geo_relations) $this->foreignIdFor(GeoCity::class)->nullable()->constrained()->nullOnDelete();
-			$this->string('city', 100)->nullable($required);
+			$this->string('city', 100)->nullable(!$required);
 			if ($with_geo_relations) $this->foreignIdFor(GeoProvince::class)->nullable()->constrained()->nullOnDelete();
-			$this->string('province', 2)->nullable($required);
+			$this->string('province', 2)->nullable(!$required);
 			if ($with_geo_relations) $this->foreignIdFor(GeoRegion::class)->nullable()->constrained()->nullOnDelete();
-			$this->string('region', 100)->nullable($required);
-			$this->string('country', 5)->nullable($required)->default($default_country);
-			$this->double('latitude', 11, 8)->nullable($required)->default(0.0);
-			$this->double('longitude', 11, 8)->nullable($required)->default(0.0);
+			$this->string('region', 100)->nullable(!$required);
+			$this->string('country', 5)->nullable(!$required)->default($default_country);
+			$this->double('latitude', 11, 8)->nullable(!$required)->default(0.0);
+			$this->double('longitude', 11, 8)->nullable(!$required)->default(0.0);
 		});
 	}
 }
