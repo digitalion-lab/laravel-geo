@@ -29,6 +29,7 @@ class DatabaseServiceProvider extends ServiceProvider
 	public function boot()
 	{
 		$default_country = strtoupper(config('geo.geocoding.country'));
+		$db_connection = config('database.default');
 
 		$models = ['GeoCity', 'GeoProvince', 'GeoRegion'];
 		$with_geo_relations = true;
@@ -36,7 +37,12 @@ class DatabaseServiceProvider extends ServiceProvider
 			$model_namespace = '\\Digitalion\\LaravelGeo\\Models\\' . $model;
 			$model_class = new $model_namespace();
 			$table_name = $model_class->getTable();
-			$with_geo_relations = Schema::hasTable($table_name);
+			$with_geo_relations = false;
+			try {
+				$with_geo_relations = Schema::connection($db_connection)->hasTable($table_name);
+			} catch (\Throwable $th) {
+				$with_geo_relations = false;
+			}
 			if (!$with_geo_relations) break;
 		}
 
