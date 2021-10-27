@@ -58,8 +58,8 @@ class DatabaseServiceProvider extends ServiceProvider
 			if ($with_geo_relations) $this->foreignIdFor(GeoRegion::class)->nullable()->constrained()->nullOnDelete();
 			$this->string('region', 100)->nullable(!$required);
 			$this->string('country', 5)->nullable(!$required)->default($default_country);
-			$this->double('latitude', 11, 8)->nullable(!$required)->default(0.0);
-			$this->double('longitude', 11, 8)->nullable(!$required)->default(0.0);
+			$this->double('latitude', 11, 8)->nullable(!$required);
+			$this->double('longitude', 11, 8)->nullable(!$required);
 		});
 	}
 }

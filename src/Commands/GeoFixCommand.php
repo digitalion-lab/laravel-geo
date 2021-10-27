@@ -17,26 +17,29 @@ class GeoFixCommand extends Command
 
 		$version = app()->version();
 		$lv = intval(substr($version, 0, strpos($version, '.')));
-		$class_namespace = (($lv >= 8) ? 'App\\Models\\' : 'App\\') . ucfirst($arg_model);
+		$class_namespace = (($lv >= 8) ? '\\App\\Models\\' : '\\App\\') . ucfirst($arg_model);
 		if (!class_exists($class_namespace)) {
 			$this->warn('Model not found.');
 			return;
 		}
-		$items = $class_namespace::withoutGlobalScopes()->whereNotNull('route')->where('route', '<>', '')->where(function ($query) {
-			$query->whereNull('latitude')->orWhereNull('longitude');
-		})->get();
+		$items = $class_namespace::withoutGlobalScopes()
+			->where(function ($q) {
+				$q->whereNotNull('route')->orWhere('route', '<>', '');
+			})
+			->where(function ($q) {
+				$q->whereNull('latitude')->orWhereNull('longitude');
+			})
+			->get();
 		$this->line('Found ' . $items->count() . ' items without coordinates but with the road indicated.');
-		$updated = 0;
-		foreach ($items as $item) {
+		$updated = $this->withProgressBar($items, function ($item) use ($gMaps) {
 			$address = $item->address;
 			if (!empty($address)) {
 				$data = $gMaps->getGeoDataFromAddress($address);
 
 				$item->update($data);
-				$updated++;
 			}
-		}
+		})->count();
 
-		$this->comment("Updated address fields of $updated items.");
+		$this->comment("\nUpdated address fields of $updated items.");
 	}
 }
