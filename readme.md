@@ -12,12 +12,12 @@ This package is still in development. It is not recommended to use it.
 
 **Stay tuned...**
 
-[badge_license]: https://img.shields.io/github/license/digitalion-lab/laravel-geo
+[badge_license]: https://img.shields.io/github/license/digitalion/laravel-geo
 [badge_stars]: https://img.shields.io/packagist/stars/digitalion/laravel-geo
 [badge_package]: https://img.shields.io/badge/package-digitalion/laravel--geo-blue.svg
-[badge_version]: https://img.shields.io/github/v/tag/digitalion-lab/laravel-geo
+[badge_version]: https://img.shields.io/github/v/tag/digitalion/laravel-geo
 [badge_downloads]: https://img.shields.io/packagist/dt/digitalion/laravel-geo
 [link-packagist]: https://packagist.org/packages/digitalion/laravel-geo
 [link-digitalion]: https://digitalion.it
 [power-by]: https://img.shields.io/badge/power%20by-Digitalion-orange
-[img-logo]: https://raw.githubusercontent.com/digitalion-lab/laravel-geo/master/icon_xs.png
+[img-logo]: https://raw.githubusercontent.com/digitalion/laravel-geo/master/icon_xs.png

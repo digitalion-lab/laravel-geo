@@ -2,7 +2,7 @@
     "name": "digitalion/laravel-geo",
     "description": "Utilities for the use of addresses and geolocation",
     "type": "library",
-    "homepage": "https://github.com/digitalion-lab/laravel-geo",
+    "homepage": "https://github.com/digitalion/laravel-geo",
     "license": "MIT",
     "prefer-stable": true,
     "keywords": [
