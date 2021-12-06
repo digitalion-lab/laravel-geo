@@ -36,24 +36,31 @@ class GeoDataIT implements GeoDataInterface
 				'istat_code' => trim(strval($d[15])), // 4 per il codice alfanumerico, 15 per il numerico
 				'catasto_code' => trim(strval($d[19])),
 				'city' => trim(strval($d[6])),
+				'city_code' => trim(strval($d[3])),
 				'region' => trim(strval($d[10])),
+				'region_code' => trim(strval($d[0])),
 				'province' => trim(strval($d[11])),
-				'province_code' => trim(strval($d[14])),
+				'province_code' => trim(strval($d[2])),
 			];
 		}
 		$cities = $this->fixDataCities($cities);
 
 		$regions = collect($cities)
-			->pluck('region')
-			->unique()
 			->map(function ($item) {
-				return ['name' => $item];
+				return [
+					'code' => $item['region_code'],
+					'name' => $item['region'],
+					'country' => 'IT',
+				];
 			})
+			->unique()
 			->all();
 		$regions = $this->fixDataRegions($regions);
 		GeoRegion::insert($regions);
 
 		$regions = GeoRegion::all();
+		echo 'Regions generated: ' . $regions->count() . "\n";
+
 		$provinces = collect($cities)
 			->map(function ($item) use ($regions) {
 				$region_id = $regions->where('name', $item['region'])->first()->id;
@@ -65,10 +72,12 @@ class GeoDataIT implements GeoDataInterface
 			})
 			->unique()
 			->all();
-		$provinces = $this->fixDataProvinces($provinces->toArray());
+		$provinces = $this->fixDataProvinces($provinces);
 		GeoProvince::insert($provinces);
 
 		$provinces = GeoProvince::all();
+		echo 'Provinces generated: ' . $provinces->count() . "\n";
+
 		$cities = collect($cities)
 			->map(function ($item) use ($regions, $provinces) {
 				$region_id = $regions->where('name', $item['region'])->first()->id;
@@ -76,6 +85,7 @@ class GeoDataIT implements GeoDataInterface
 				return [
 					$this->tables_prefix . 'region_id' => $region_id,
 					$this->tables_prefix . 'province_id' => $province_id,
+					'code' => $item['city_code'],
 					'istat_code' => $item['istat_code'],
 					'catasto_code' => $item['catasto_code'],
 					'name' => $item['city'],
@@ -86,7 +96,7 @@ class GeoDataIT implements GeoDataInterface
 		GeoCity::insert($cities);
 
 		$cities = GeoCity::all();
-		echo 'Data generate: ' . $regions->count() . ' regions, ' . $provinces->count() . ' provinces, ' . $cities->count() . ' cities.' . "\n";
+		echo 'Cities generated: ' . $cities->count() . "\n";
 	}
 
 	public function dataClimate()
@@ -98,11 +108,11 @@ class GeoDataIT implements GeoDataInterface
 		foreach ($csv_rows as &$csv_row) $data[] = str_getcsv($csv_row, ',');
 		array_shift($data);
 
-		$inserted = 0;
 		$updated = 0;
+		$notfound = [];
 		$total = intval(count($data));
 		foreach ($data as $row) {
-			$city = trim($row[1]);
+			$name = $this->fixClimateCityName($row[1]);
 			$zona_climatica = preg_replace("/[^a-zA-Z0-9]+/", "", $row[5]);
 			$zona_sismica = preg_replace("/[^a-zA-Z0-9]+/", "", $row[6]);
 			$polygon_str = str_replace(['MULTIPOLYGON ', '(', ')'], '', $row[8]);
@@ -116,16 +126,14 @@ class GeoDataIT implements GeoDataInterface
 				];
 			}
 
-			$data = compact('city', 'polygon', 'zona_climatica', 'zona_sismica');
+			$data = compact('polygon', 'zona_climatica', 'zona_sismica');
 			try {
-				$city = GeoCity::updateOrCreate(
-					compact('city'),
-					$data
-				);
-				if ($city->wasRecentlyCreated) {
-					$inserted++;
-				} else {
+				$city = GeoCity::where('name', $name)->first();
+				if (!empty($city)) {
+					$city->update($data);
 					$updated++;
+				} else {
+					$notfound[] = $name;
 				}
 			} catch (Throwable $th) {
 				logger()->debug($data);
@@ -133,7 +141,18 @@ class GeoDataIT implements GeoDataInterface
 			}
 		}
 
-		echo "$inserted city added and $updated cities updated of $total.\n";
+		if (count($notfound) > 0) {
+			$message = "[COMMAND] geo:data IT\n[data]\n";
+			$message .= 'Cities not found: ' . implode(', ', $notfound);
+			logger()->debug($message);
+		}
+		$notfound = count($notfound);
+		echo "$updated city updated of $total. $notfound cities not founded. \n";
+	}
+
+	private function fixClimateCityName(string $string)
+	{
+		return trim($string);
 	}
 
 	private function fixDataCities(array $items): array

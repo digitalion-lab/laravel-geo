@@ -10,9 +10,12 @@ class GeoRegion extends Model
 {
 	use HasFactory, GeoTableTrait;
 
+	protected $casts = [
+		'polygon' => 'json',
+	];
 	protected $guarded = [];
-	public $timestamps = false;
 	protected $table = null;
+	public $timestamps = false;
 
 
 

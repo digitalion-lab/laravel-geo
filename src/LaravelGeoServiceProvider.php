@@ -31,7 +31,7 @@ class LaravelGeoServiceProvider extends ServiceProvider
 			], 'laravel-geo-configs');
 
 			$this->publishes([
-				__DIR__ . '/../database/migrations/create_geo_tables.php' => database_path('migrations/create_geo_tables.php')
+				__DIR__ . '/../database/migrations/create_geo_tables.php' => database_path('migrations/'.date('Y_m_d_His_').'create_geo_tables.php')
 			], 'laravel-geo-migrations');
 
 

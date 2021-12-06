@@ -34,6 +34,7 @@ class CreateGeoTables extends Migration
 			$table->id();
 			$table->foreignIdFor(GeoRegion::class)->constrained($table_prefix . 'regions')->cascadeOnDelete();
 			$table->foreignIdFor(GeoProvince::class)->constrained($table_prefix . 'provinces')->cascadeOnDelete();
+			$table->string('code', 5);
 			$table->string('istat_code', 10)->nullable();
 			$table->string('catasto_code', 10)->nullable();
 			$table->unsignedSmallInteger('postal_code')->nullable();
