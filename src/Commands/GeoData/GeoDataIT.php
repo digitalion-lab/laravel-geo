@@ -40,7 +40,7 @@ class GeoDataIT implements GeoDataInterface
 				'region' => trim(strval($d[10])),
 				'region_code' => trim(strval($d[0])),
 				'province' => trim(strval($d[11])),
-				'province_code' => trim(strval($d[2])),
+				'province_code' => trim(strval($d[14])),
 			];
 		}
 		$cities = $this->fixDataCities($cities);

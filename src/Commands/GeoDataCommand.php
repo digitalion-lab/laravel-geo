@@ -21,7 +21,7 @@ class GeoDataCommand extends Command
 	public function handle()
 	{
 		$this->tables_prefix = config('geo.tables_prefix');
-		$this->country = strtoupper($this->argument('country') ?:  config('geo.geocoding.country'));
+		$this->country = strtoupper($this->argument('country') ?: config('geo.geocoding.country'));
 
 		if (empty($this->country)) {
 			$this->warn('Operation aborted: no country indicated or found in the configuration file.');
