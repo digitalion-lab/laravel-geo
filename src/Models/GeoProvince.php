@@ -23,10 +23,10 @@ class GeoProvince extends Model
 
 	public function cities()
 	{
-		return $this->hasMany(GeoCity::class);
+		return $this->hasMany(GeoCity::class)->orderBy('name');
 	}
 	public function region()
 	{
-		return $this->belongsTo(GeoRegion::class);
+		return $this->belongsTo(GeoRegion::class)->orderBy('name');
 	}
 }

@@ -23,10 +23,10 @@ class GeoRegion extends Model
 
 	public function cities()
 	{
-		return $this->hasMany(GeoCity::class);
+		return $this->hasMany(GeoCity::class)->orderBy('name');
 	}
 	public function provinces()
 	{
-		return $this->hasMany(GeoProvince::class);
+		return $this->hasMany(GeoProvince::class)->orderBy('name');
 	}
 }
