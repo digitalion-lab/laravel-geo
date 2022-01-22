@@ -72,7 +72,7 @@ class GoogleMaps
 
 	public static function getMapUrl($latitude,  $longitude): string
 	{
-		$coords = (is_float($latitude) && !is_float($longitude))
+		$coords = (is_float($latitude) && is_float($longitude))
 			? number_format((float) $latitude, 7, '.', '') . ',' . number_format((float) $longitude, 7, '.', '')
 			: '';
 		if (!empty($coords)) {
