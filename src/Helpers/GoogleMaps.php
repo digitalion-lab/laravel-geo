@@ -72,10 +72,36 @@ class GoogleMaps
 
 	public static function getMapUrl($latitude,  $longitude): string
 	{
-		$coords = (!empty($latitude) || !empty($longitude)) ? $latitude . ',' . $longitude : '';
-		return (!empty($coords))
-			? 'https://www.google.com/maps/place/' . $coords
+		$coords = (is_float($latitude) && !is_float($longitude))
+			? number_format((float) $latitude, 7, '.', '') . ',' . number_format((float) $longitude, 7, '.', '')
 			: '';
+		if (!empty($coords)) {
+			$url = 'https://maps.google.com?q=' . $coords;
+			$maptype = config('geo.map.maptype', 'roadmap');
+			switch ($maptype) {
+				case 'satellite':
+					$url .= '&t=k';
+					break;
+
+				case 'terrain':
+					$url .= '&t=p';
+					break;
+
+				case 'hybrid':
+					$url .= '&t=h';
+					break;
+
+				case 'roadmap':
+				default:
+					$url .= '&t=m';
+					break;
+			}
+			$zoom = intval(config('geo.map.zoom', 13));
+			$url .= '&z=' . $zoom;
+
+			return $url;
+		}
+		return '';
 	}
 
 	public static function getMapImageUrl($latitude,  $longitude): string
