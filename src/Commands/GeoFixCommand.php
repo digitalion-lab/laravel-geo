@@ -32,11 +32,17 @@ class GeoFixCommand extends Command
 			->get();
 		$this->line('Found ' . $items->count() . ' items without coordinates but with the road indicated.');
 		$updated = $this->withProgressBar($items, function ($item) use ($gMaps) {
-			$address = $item->address;
-			if (!empty($address)) {
-				$data = $gMaps->getGeoDataFromAddress($address);
+			if (empty($item->deleted_at)) {
+				$address = $item->address;
+				if (!empty($address)) {
+					$data = $gMaps->getGeoDataFromAddress($address);
 
-				$item->update($data);
+					try {
+						$item->update($data);
+					} catch (\Throwable $th) {
+						//throw $th;
+					}
+				}
 			}
 		})->count();
 

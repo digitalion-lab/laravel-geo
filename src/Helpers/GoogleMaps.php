@@ -2,6 +2,7 @@
 
 namespace Digitalion\LaravelGeo\Helpers;
 
+use Digitalion\LaravelGeo\Enums\GoogleMapsAddressComponentsEnum;
 use GuzzleHttp\Client;
 use Spatie\Geocoder\Geocoder;
 
@@ -49,16 +50,9 @@ class GoogleMaps
 			$data = compact('latitude', 'longitude');
 			if (!empty($result['address_components'])) {
 				$address = collect($result['address_components']);
+				$components = $this->filter_address_components($address);
 
-				$route = $this->filter_address_components($address, 'route');
-				$street_number = $this->filter_address_components($address, 'street_number');
-				$postal_code = $this->filter_address_components($address, 'postal_code');
-				$province = $this->filter_address_components($address, 'administrative_area_level_2');
-				$city = $this->filter_address_components($address, 'administrative_area_level_3');
-				$region = $this->filter_address_components($address, 'administrative_area_level_1');
-				$country = $this->filter_address_components($address, 'country');
-
-				$data = array_merge($data, compact('route', 'street_number', 'postal_code', 'province', 'city', 'region', 'country'));
+				$data = array_merge($data, $components);
 			}
 		}
 
@@ -136,13 +130,88 @@ class GoogleMaps
 	 * PRIVATE METHODS
 	 */
 
-	private function filter_address_components($collection, string $property)
+	private function filter_address_components($components)
 	{
-		$item = $collection->filter(function ($value, $key) use ($property) {
-			return boolval(array_search($property, $value->types) !== false);
-		})->first();
+		$item = [];
 
-		if (empty($item)) return null;
-		return $item->short_name;
+		foreach ($components->all() as $component) {
+			if (!empty($component->types)) {
+				foreach ($component->types as $type) {
+					$field = '';
+					switch ($type) {
+						case 'route':
+							$field = GoogleMapsAddressComponentsEnum::Route; break;
+						case 'street_number':
+							$field = GoogleMapsAddressComponentsEnum::StreetNumber; break;
+						case 'postal_code':
+							$field = GoogleMapsAddressComponentsEnum::PostalCode; break;
+						case 'country':
+							$field = GoogleMapsAddressComponentsEnum::Country; break;
+						case 'locality':
+							$field = GoogleMapsAddressComponentsEnum::Locality; break;
+						case 'administrative_area_level_1':
+							$field = GoogleMapsAddressComponentsEnum::Region; break;
+						case 'administrative_area_level_2':
+							$field = GoogleMapsAddressComponentsEnum::Province; break;
+						case 'administrative_area_level_3':
+							$field = GoogleMapsAddressComponentsEnum::City; break;
+					}
+					if (!empty($field)) {
+						$item[$field] = $this->check_value_for_db($field, $component->short_name);
+					}
+				}
+			}
+		}
+
+		return $item;
+	}
+
+	private function check_value_for_db($field, $value)
+	{
+		switch ($field) {
+			case GoogleMapsAddressComponentsEnum::StreetNumber:
+				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::StreetNumber, 25));
+				break;
+			case GoogleMapsAddressComponentsEnum::Route:
+				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::Route, 100));
+				break;
+			case GoogleMapsAddressComponentsEnum::PostalCode:
+				$maxvalue = 1000000;
+				switch (config('geo.database.'.GoogleMapsAddressComponentsEnum::PostalCode, 'mediumint')) {
+					case 'bigint':
+						$maxvalue = 4294967295;
+						break;
+
+					case 'int':
+						$maxvalue = 4294967295;
+						break;
+
+					case 'mediumint':
+					default:
+						$maxvalue = 16777215;
+						break;
+				}
+				if ($value < 0 || $value > $maxvalue) {
+					$value = 0;
+				}
+				break;
+			case GoogleMapsAddressComponentsEnum::City:
+				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::City, 100));
+				break;
+			case GoogleMapsAddressComponentsEnum::Locality:
+				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::Locality, 100));
+				break;
+			case GoogleMapsAddressComponentsEnum::Province:
+				if (strlen($value) > config('geo.database.'.GoogleMapsAddressComponentsEnum::Province, 2)) $value = '';
+				break;
+			case GoogleMapsAddressComponentsEnum::Country:
+				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::Country, 5));
+				break;
+			case GoogleMapsAddressComponentsEnum::Region:
+				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::Region, 100));
+				break;
+		}
+
+		return $value;
 	}
 }

@@ -93,4 +93,16 @@ return [
 		 */
 		'zoom' => 13,
 	],
+
+	// limits or types of fields in the database
+	'database' => [
+		'street_number' => 25,
+		'route' => 100,
+		'postal_code' => 'mediumint',	// integer, size: mediumint, int or bigint
+		'city' => 100,
+		'locality' => 100,
+		'province' => 2,
+		'country' => 5,
+		'region' => 100,
+	],
 ];

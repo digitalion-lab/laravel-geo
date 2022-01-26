@@ -23,8 +23,8 @@
     ],
     "require": {
         "illuminate/support": ">=6",
-        "guzzlehttp/guzzle": "^7.3",
-        "spatie/geocoder": "^3.10"
+        "guzzlehttp/guzzle": "^7.4",
+        "spatie/geocoder": "^3.11"
     },
     "autoload": {
           "psr-4": {
