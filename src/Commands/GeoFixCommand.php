@@ -2,6 +2,7 @@
 
 namespace Digitalion\LaravelGeo\Commands;
 
+use Digitalion\LaravelGeo\Enums\GoogleMapsAddressComponentsEnum;
 use Digitalion\LaravelGeo\Helpers\GoogleMaps;
 use Illuminate\Console\Command;
 
@@ -24,10 +25,10 @@ class GeoFixCommand extends Command
 		}
 		$items = $class_namespace::withoutGlobalScopes()
 			->where(function ($q) {
-				$q->whereNotNull('route')->orWhere('route', '<>', '');
+				$q->whereNotNull(GoogleMapsAddressComponentsEnum::Route)->orWhere(GoogleMapsAddressComponentsEnum::Route, '<>', '');
 			})
 			->where(function ($q) {
-				$q->whereNull('latitude')->orWhereNull('longitude');
+				$q->whereNull(GoogleMapsAddressComponentsEnum::Latitude)->orWhereNull(GoogleMapsAddressComponentsEnum::Longitude);
 			})
 			->get();
 		$this->line('Found ' . $items->count() . ' items without coordinates but with the road indicated.');

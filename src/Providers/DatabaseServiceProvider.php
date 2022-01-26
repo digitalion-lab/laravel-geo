@@ -2,6 +2,7 @@
 
 namespace Digitalion\LaravelGeo\Providers;
 
+use Digitalion\LaravelGeo\Enums\GoogleMapsAddressComponentsEnum;
 use Digitalion\LaravelGeo\Models\GeoCity;
 use Digitalion\LaravelGeo\Models\GeoProvince;
 use Digitalion\LaravelGeo\Models\GeoRegion;
@@ -47,32 +48,54 @@ class DatabaseServiceProvider extends ServiceProvider
 		}
 
 		Blueprint::macro('address', function (bool $required = true) use ($default_country, $with_geo_relations) {
-			$this->string('route', config('geo.database.route', 100))->nullable(!$required);
-			$this->string('street_number', config('geo.database.street_number', 25))->nullable();
-			switch (config('geo.database.postal_code', 'mediumint')) {
-				case 'int':
-					$this->unsignedInteger('postal_code')->nullable(!$required);
-					break;
+			// route
+			$field = GoogleMapsAddressComponentsEnum::Route;
+			$this->string($field, config("geo.database.$field", 100))->nullable(!$required);
 
-				case 'bigint':
-					$this->unsignedBigInteger('postal_code')->nullable(!$required);
-					break;
+			// street number
+			$field = GoogleMapsAddressComponentsEnum::StreetNumber;
+			$this->string($field, config("geo.database.$field", 25))->nullable();
 
-				case 'mediumint':
-				default:
-					$this->unsignedMediumInteger('postal_code')->nullable(!$required);
-					break;
-			}
-			$this->string('locality', config('geo.database.locality', 100))->nullable();
+			// postal code
+			$field = GoogleMapsAddressComponentsEnum::PostalCode;
+			$this->string($field, config("geo.database.$field", 5))->nullable();
+
+			// locality
+			$field = GoogleMapsAddressComponentsEnum::Locality;
+			$this->string($field, config("geo.database.$field", 100))->nullable();
+
+			// geo city id
 			if ($with_geo_relations) $this->foreignIdFor(GeoCity::class)->nullable()->constrained()->nullOnDelete();
-			$this->string('city', config('geo.database.city', 100))->nullable(!$required);
+
+			// city
+			$field = GoogleMapsAddressComponentsEnum::City;
+			$this->string($field, config("geo.database.$field", 100))->nullable(!$required);
+
+			// geo province id
 			if ($with_geo_relations) $this->foreignIdFor(GeoProvince::class)->nullable()->constrained()->nullOnDelete();
-			$this->string('province', config('geo.database.province', 2))->nullable(!$required);
+
+			// province
+			$field = GoogleMapsAddressComponentsEnum::Province;
+			$this->string($field, config("geo.database.$field", 2))->nullable(!$required);
+
+			// geo region id
 			if ($with_geo_relations) $this->foreignIdFor(GeoRegion::class)->nullable()->constrained()->nullOnDelete();
-			$this->string('region', config('geo.database.region', 100))->nullable(!$required);
-			$this->string('country', config('geo.database.country', 5))->nullable(!$required)->default($default_country);
-			$this->double('latitude', 11, 8)->nullable(!$required);
-			$this->double('longitude', 11, 8)->nullable(!$required);
+
+			// region
+			$field = GoogleMapsAddressComponentsEnum::Region;
+			$this->string($field, config("geo.database.$field", 100))->nullable(!$required);
+
+			// region
+			$field = GoogleMapsAddressComponentsEnum::Country;
+			$this->string($field, config("geo.database.$field", 5))->nullable(!$required)->default($default_country);
+
+			// latitude
+			$field = GoogleMapsAddressComponentsEnum::Latitude;
+			$this->double($field, 11, 8)->nullable(!$required);
+
+			// longitude
+			$field = GoogleMapsAddressComponentsEnum::Longitude;
+			$this->double($field, 11, 8)->nullable(!$required);
 		});
 	}
 }

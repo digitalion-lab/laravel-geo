@@ -1,5 +1,7 @@
 <?php
 
+use Digitalion\LaravelGeo\Enums\GoogleMapsAddressComponentsEnum;
+
 return [
 	/**
 	 * the prefix to give to the tables with the list of regions, provinces and cities.
@@ -96,13 +98,13 @@ return [
 
 	// limits or types of fields in the database
 	'database' => [
-		'street_number' => 25,
-		'route' => 100,
-		'postal_code' => 'mediumint',	// integer, size: mediumint, int or bigint
-		'city' => 100,
-		'locality' => 100,
-		'province' => 2,
-		'country' => 5,
-		'region' => 100,
+		GoogleMapsAddressComponentsEnum::StreetNumber => 25,
+		GoogleMapsAddressComponentsEnum::Route => 100,
+		GoogleMapsAddressComponentsEnum::PostalCode => 5,
+		GoogleMapsAddressComponentsEnum::City => 100,
+		GoogleMapsAddressComponentsEnum::Locality => 100,
+		GoogleMapsAddressComponentsEnum::Province => 2,
+		GoogleMapsAddressComponentsEnum::Country => 5,
+		GoogleMapsAddressComponentsEnum::Region => 100,
 	],
 ];

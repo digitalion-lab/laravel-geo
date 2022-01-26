@@ -47,7 +47,10 @@ class GoogleMaps
 			$latitude = $result['lat'] ?? null;
 			$longitude = $result['lng'] ?? null;
 
-			$data = compact('latitude', 'longitude');
+			$data = [
+				GoogleMapsAddressComponentsEnum::Latitude => $latitude,
+				GoogleMapsAddressComponentsEnum::Longitude => $longitude,
+			];
 			if (!empty($result['address_components'])) {
 				$address = collect($result['address_components']);
 				$components = $this->filter_address_components($address);
@@ -140,21 +143,29 @@ class GoogleMaps
 					$field = '';
 					switch ($type) {
 						case 'route':
-							$field = GoogleMapsAddressComponentsEnum::Route; break;
+							$field = GoogleMapsAddressComponentsEnum::Route;
+							break;
 						case 'street_number':
-							$field = GoogleMapsAddressComponentsEnum::StreetNumber; break;
+							$field = GoogleMapsAddressComponentsEnum::StreetNumber;
+							break;
 						case 'postal_code':
-							$field = GoogleMapsAddressComponentsEnum::PostalCode; break;
+							$field = GoogleMapsAddressComponentsEnum::PostalCode;
+							break;
 						case 'country':
-							$field = GoogleMapsAddressComponentsEnum::Country; break;
+							$field = GoogleMapsAddressComponentsEnum::Country;
+							break;
 						case 'locality':
-							$field = GoogleMapsAddressComponentsEnum::Locality; break;
+							$field = GoogleMapsAddressComponentsEnum::Locality;
+							break;
 						case 'administrative_area_level_1':
-							$field = GoogleMapsAddressComponentsEnum::Region; break;
+							$field = GoogleMapsAddressComponentsEnum::Region;
+							break;
 						case 'administrative_area_level_2':
-							$field = GoogleMapsAddressComponentsEnum::Province; break;
+							$field = GoogleMapsAddressComponentsEnum::Province;
+							break;
 						case 'administrative_area_level_3':
-							$field = GoogleMapsAddressComponentsEnum::City; break;
+							$field = GoogleMapsAddressComponentsEnum::City;
+							break;
 					}
 					if (!empty($field)) {
 						$item[$field] = $this->check_value_for_db($field, $component->short_name);
@@ -170,45 +181,28 @@ class GoogleMaps
 	{
 		switch ($field) {
 			case GoogleMapsAddressComponentsEnum::StreetNumber:
-				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::StreetNumber, 25));
+				$value = \Str::limit($value, config("geo.database.$field", 25));
 				break;
 			case GoogleMapsAddressComponentsEnum::Route:
-				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::Route, 100));
+				$value = \Str::limit($value, config("geo.database.$field", 100));
 				break;
 			case GoogleMapsAddressComponentsEnum::PostalCode:
-				$maxvalue = 1000000;
-				switch (config('geo.database.'.GoogleMapsAddressComponentsEnum::PostalCode, 'mediumint')) {
-					case 'bigint':
-						$maxvalue = 4294967295;
-						break;
-
-					case 'int':
-						$maxvalue = 4294967295;
-						break;
-
-					case 'mediumint':
-					default:
-						$maxvalue = 16777215;
-						break;
-				}
-				if ($value < 0 || $value > $maxvalue) {
-					$value = 0;
-				}
+				if (strlen($value) > config("geo.database.$field", 5)) $value = '';
 				break;
 			case GoogleMapsAddressComponentsEnum::City:
-				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::City, 100));
+				$value = \Str::limit($value, config("geo.database.$field", 100));
 				break;
 			case GoogleMapsAddressComponentsEnum::Locality:
-				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::Locality, 100));
+				$value = \Str::limit($value, config("geo.database.$field", 100));
 				break;
 			case GoogleMapsAddressComponentsEnum::Province:
-				if (strlen($value) > config('geo.database.'.GoogleMapsAddressComponentsEnum::Province, 2)) $value = '';
+				if (strlen($value) > config("geo.database.$field", 2)) $value = '';
 				break;
 			case GoogleMapsAddressComponentsEnum::Country:
-				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::Country, 5));
+				$value = \Str::limit($value, config("geo.database.$field", 5));
 				break;
 			case GoogleMapsAddressComponentsEnum::Region:
-				$value = \Str::limit($value, config('geo.database.'.GoogleMapsAddressComponentsEnum::Region, 100));
+				$value = \Str::limit($value, config("geo.database.$field", 100));
 				break;
 		}
 

@@ -3,6 +3,7 @@
 namespace Digitalion\LaravelGeo\Commands\GeoData;
 
 use Digitalion\LaravelGeo\Commands\GeoData\GeoDataInterface;
+use Digitalion\LaravelGeo\Enums\GoogleMapsAddressComponentsEnum;
 use Digitalion\LaravelGeo\Models\GeoCity;
 use Digitalion\LaravelGeo\Models\GeoProvince;
 use Digitalion\LaravelGeo\Models\GeoRegion;
@@ -121,8 +122,8 @@ class GeoDataIT implements GeoDataInterface
 			foreach ($polygon_points as $point) {
 				$coords = explode(' ', trim($point));
 				$polygon[] = [
-					'latitude'	=> $coords[1],
-					'longitude'	=> $coords[0],
+					GoogleMapsAddressComponentsEnum::Latitude	=> $coords[1],
+					GoogleMapsAddressComponentsEnum::Longitude	=> $coords[0],
 				];
 			}
 

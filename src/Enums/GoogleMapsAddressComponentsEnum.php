@@ -12,4 +12,6 @@ final class GoogleMapsAddressComponentsEnum
 	const City = 'city';
 	const Region = 'region';
 	const Country = 'country';
+	const Latitude = 'latitude';
+	const Longitude = 'longitude';
 }
