@@ -27,6 +27,6 @@ class GeoProvince extends Model
 	}
 	public function region()
 	{
-		return $this->belongsTo(GeoRegion::class)->orderBy('name');
+		return $this->belongsTo(GeoRegion::class, 'geo_region_id')->orderBy('name');
 	}
 }

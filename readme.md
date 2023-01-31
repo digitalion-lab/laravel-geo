@@ -23,5 +23,7 @@ This package is still in development. It is not recommended to use it.
 [img-logo]: https://raw.githubusercontent.com/digitalion/laravel-geo/master/icon_xs.png
 
 ## TODO
+
 [ ] Manage relation id retrieval in tables that are related to geo tables
+
 [ ] Allow to set a prefix for geo fields, for each single model

@@ -23,10 +23,10 @@ class GeoCity extends Model
 
 	public function province()
 	{
-		return $this->belongsTo(GeoProvince::class)->orderBy('name');
+		return $this->belongsTo(GeoProvince::class, 'geo_province_id')->orderBy('name');
 	}
 	public function region()
 	{
-		return $this->belongsTo(GeoRegion::class)->orderBy('name');
+		return $this->belongsTo(GeoRegion::class, 'geo_region_id')->orderBy('name');
 	}
 }
