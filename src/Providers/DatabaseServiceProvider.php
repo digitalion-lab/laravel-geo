@@ -29,25 +29,26 @@ class DatabaseServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
-		$default_country = strtoupper(config('geo.geocoding.country'));
-		$db_connection = config('database.default');
+		Blueprint::macro('address', function (bool $required = true) {
+			$default_country = strtoupper(config('geo.geocoding.country'));
 
-		$models = ['GeoCity', 'GeoProvince', 'GeoRegion'];
-		$with_geo_relations = true;
-		foreach ($models as $model) {
-			$model_namespace = '\\Digitalion\\LaravelGeo\\Models\\' . $model;
-			$model_class = new $model_namespace();
-			$table_name = $model_class->getTable();
 			$with_geo_relations = false;
-			try {
-				$with_geo_relations = Schema::connection($db_connection)->hasTable($table_name);
-			} catch (\Throwable $th) {
-				$with_geo_relations = false;
-			}
-			if (!$with_geo_relations) break;
-		}
+			foreach (['GeoCity', 'GeoProvince', 'GeoRegion'] as $model) {
+				$namespacedModelClass = "\\Digitalion\\LaravelGeo\\Models\\{$model}";
+				$instance = new $namespacedModelClass();
+				$tableName = $instance->getTable();
 
-		Blueprint::macro('address', function (bool $required = true) use ($default_country, $with_geo_relations) {
+				try {
+					$with_geo_relations = Schema::connection(config('database.default'))->hasTable($tableName);
+				} catch (\Throwable $th) {
+					$with_geo_relations = false;
+				}
+
+				if (!$with_geo_relations) {
+					break;
+				}
+			}
+
 			// route
 			$field = GoogleMapsAddressComponentsEnum::Route;
 			$this->string($field, config("geo.database.$field", 100))->nullable(!$required);
